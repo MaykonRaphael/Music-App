@@ -9,8 +9,11 @@ import {
 } from 'react-native';
 import { Audio } from 'expo-av';
 import { AntDesign } from '@expo/vector-icons';
+import { Player } from './src/components/Player';
 
 export default function App() {
+  const [ indexAudio, setIndexAudio ] = useState(0);
+  const [ playing, setPlaying ] = useState(false);
   const [ audio, setAudio ] = useState(null);
   const [ music, setMusic ] = useState([
     {
@@ -43,6 +46,8 @@ export default function App() {
       if(id == k) {
         music[k].playing = true;
         curFile = music[k].file;
+        setPlaying(true);
+        setIndexAudio(id);
       } else {
         music[k].playing = false;
       }
@@ -68,52 +73,67 @@ export default function App() {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <StatusBar style="light" />
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Music App</Text>
-      </View>
+    <View style={{flex: 1}}>
+      <ScrollView style={styles.container}>
+        <StatusBar style="light" />
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Music App</Text>
+        </View>
 
-      <View style={styles.table} >
-        <Text style={styles.tableText} >Music</Text>
-        <Text style={styles.tableText} >Artist</Text>
-      </View>
+        <View style={styles.table} >
+          <Text style={styles.tableText} >Music</Text>
+          <Text style={styles.tableText} >Artist</Text>
+        </View>
 
-      {
-        music.map((val, k)=>{
-          if(val.playing){
-            return(
-              <TouchableOpacity onPress={()=>handleChangeMusic(k)} style={styles.musicButton} key={k} >
-                <View style={styles.table} >
-                    <Text style={styles.tableTextPlay} >
-                      <AntDesign name="play" size={15} color='#57B65F' > </AntDesign>
-                      {val.name}
-                    </Text>
-                    <Text style={styles.tableTextPlay} >
-                      {val.artist}
-                    </Text>
-                </View>
-              </TouchableOpacity>
-            )
-          } else {
-            return(
-              <TouchableOpacity onPress={()=>handleChangeMusic(k)} style={styles.table} key={k} >
-                <View style={styles.musicButton} >
-                    <Text style={styles.tableText} >
-                      <AntDesign name="play" size={15} color='#FFF' > </AntDesign>
-                      {val.name}
-                    </Text>
-                    <Text style={styles.tableText} >
-                      {val.artist}
-                    </Text>
-                </View>
-              </TouchableOpacity>
-            )
-          }
+        {
+          music.map((val, k)=>{
+            if(val.playing){
+              return(
+                <TouchableOpacity onPress={()=>handleChangeMusic(k)} style={styles.musicButton} key={k} >
+                  <View style={styles.table} >
+                      <Text style={styles.tableTextPlay} >
+                        <AntDesign name="play" size={15} color='#57B65F' > </AntDesign>
+                        {val.name}
+                      </Text>
+                      <Text style={styles.tableTextPlay} >
+                        {val.artist}
+                      </Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            } else {
+              return(
+                <TouchableOpacity onPress={()=>handleChangeMusic(k)} style={styles.table} key={k} >
+                  <View style={styles.musicButton} >
+                      <Text style={styles.tableText} >
+                        <AntDesign name="play" size={15} color='#FFF' > </AntDesign>
+                        {val.name}
+                      </Text>
+                      <Text style={styles.tableText} >
+                        {val.artist}
+                      </Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            }
 
-        })
-      }
-    </ScrollView>
+          })
+        }
+
+        <View style={{paddingBottom: 200}}></View>
+      </ScrollView>
+
+      <Player
+        playing={playing}
+        setPlaying={setPlaying}
+        indexAudio={indexAudio}
+        setIndexAudio={setIndexAudio}
+        music={music}
+        setMusic={setMusic}
+        audio={audio}
+        setAudio={setAudio}
+      />
+    </View>
   );
 }
 
